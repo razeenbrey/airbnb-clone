@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# production
+/dist
+
+# environment
+.env
+
+# uploads
+/uploads
+/public/uploads
+
+# logs
+*.log

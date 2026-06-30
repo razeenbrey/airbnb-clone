@@ -1,0 +1,129 @@
+#footer {
+    width: 100%;
+    background-color: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+    padding: 48px 24px 24px; 
+}
+
+#footer-body {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 32px;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.f-sec-heading {
+    padding-bottom: 16px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 150%;
+    color: #000000;
+}
+
+.f-sec-content {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.f-sec-content li {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #4B5563;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+.f-sec-content li:hover {
+    color: #000000;
+    text-decoration: underline;
+}
+
+#footer-lower {
+    border-top: 1px solid #E5E7EB;
+    margin-top: 48px;
+    padding-top: 24px;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tablet: 2 columns */
+@media (max-width: 768px) {
+    #footer {
+        padding: 36px 20px 24px;
+    }
+    
+    #footer-body {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+/* Mobile: 1 column */
+@media (max-width: 480px) {
+    #footer {
+        padding: 32px 16px 20px;
+    }
+    
+    #footer-body {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    
+    .f-sec-heading {
+        padding-bottom: 12px;
+    }
+}
+
+#footer-lower {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    border-top: 1px solid #E5E7EB;
+    margin-top: 48px;
+    padding-top: 24px;
+    width: 100%;
+}
+
+#f-left {
+    font-size: 14px;
+    color: #4B5563;
+}
+
+#f-right {
+    display: flex;
+    align-items: center;
+    gap: 16px; 
+}
+
+#f-lang {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#f-lang img {
+    width: 16px;
+    height: 16px;
+}
+
+#f-socials {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+}
+
+#f-socials img {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}

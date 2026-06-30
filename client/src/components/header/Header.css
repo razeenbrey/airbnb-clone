@@ -1,0 +1,111 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#container{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#Pages{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    white-space: nowrap;
+    gap: 32px;
+}
+
+.TextDarkPrimary{
+    /* Title */
+    width: 106px;
+    height: 24px;
+    /* text-base/Regular */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+
+    /* white */
+    color: #FFFFFF;
+    cursor: pointer;
+}
+.TextDarkPrimary:hover{
+    border-bottom: #FFFFFF;
+    /* todo: make a small underline here when on hover */
+}
+
+.TextDarkSecondary{
+    /* Title */
+
+    width: 102px;
+    height: 20px;
+
+    /* text-sm/Medium */
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    /* identical to box height, or 143% */
+    display: flex;
+    align-items: center;
+
+    /* white */
+    color: #FFFFFF;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+#Right{
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    align-items: center;
+}
+
+#globe{
+    width: 24px;
+    height:24px;
+}
+
+#profilePill{
+    /* Profile Dropdown */
+
+/* Auto layout */
+display: flex;
+flex-direction: row;
+align-items: center;
+padding: 8px 8px 8px 16px;
+gap: 8px;
+
+width: 88px;
+height: 48px;
+
+/* white */
+background: #FFFFFF;
+border-radius: 100px;
+
+/* Inside auto layout */
+flex: none;
+order: 2;
+flex-grow: 0;
+
+}
+#menu{
+    width: 24px;
+    height:24px;
+}
+#Avatar{
+    width:32px;
+    height: 32px;
+}
+

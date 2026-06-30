@@ -1,0 +1,21 @@
+html,
+body,
+#root {
+  margin: 0;
+  font-family: 'Figtree', sans-serif;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}

@@ -1,0 +1,118 @@
+/* SearchBarDefault.css */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#bar{
+    /* Airbnb Search */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 8px 8px 32px;
+    gap: 32px;
+    justify-content: center;
+
+    width: 848px;
+    height: 64px;
+
+    /* white */
+    background: #FFFFFF;
+    border-radius: 1000px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+.seg{
+    border-right: #6B7280;
+    align-items: center;
+}
+.seg.icon{
+    display: flex;
+}
+
+.text-primary{
+    /* Attribute */
+
+    width: 150px;
+    height: 16px;
+
+    /* text-xs/Medium */
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 16px;
+    /* identical to box height, or 133% */
+    display: flex;
+    align-items: center;
+
+    /* black */
+    color: #000000;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+}
+
+.text-secondary{
+    /* Value */
+
+    width: 81px;
+    height: 20px;
+
+    /* text-sm/Regular */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    /* identical to box height, or 143% */
+    display: flex;
+    align-items: center;
+
+    /* gray/500 */
+    color: #6B7280;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+
+}
+
+#circle{
+    /* Icon Button Base */
+
+    /* Auto layout */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+
+    width: 48px;
+    height: 48px;
+
+    background: #DE3151;
+    /* shadow-base */
+    box-shadow: 0px 1px 2px rgba(31, 41, 55, 0.08);
+    border-radius: 100px;
+
+    /* Inside auto layout */
+    flex: none;
+    order: 0;
+    align-self: stretch;
+    flex-grow: 1;
+
+}

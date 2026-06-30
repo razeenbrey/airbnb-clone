@@ -60,7 +60,7 @@ function Footer(){
 
                 <div id="footer-lower">
                     <div id='f-left'>
-                        © 2022 Airbnb, Inc. • Privacy • Terms • Sitemap
+                        © 2026 Airbnb, Inc. • Privacy • Terms • Sitemap
                     </div>
                     <div id='f-right'>
                         <div id='f-lang'>

@@ -1,4 +1,10 @@
-function Button({fg, bg, text}){
+function Button({
+                fg,
+                bg, 
+                text,
+                width= '142px',
+                height= '56px'
+            }){
 
     const buttonStyle = {
         /* Button */
@@ -17,8 +23,8 @@ function Button({fg, bg, text}){
         border:"none",
         padding: 0,
 
-        width: 142,
-        height: 56,
+        width: width,
+        height: height,
 
         /* Inside auto layout */
         flex: 'none',

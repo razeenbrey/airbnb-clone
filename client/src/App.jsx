@@ -18,13 +18,14 @@ import Home from './pages/home/Home';
 import Listing from './pages/listing/Listing';
 import Search from './pages/search/Search';
 import User from './pages/user/User';
+import Login from './pages/login/Login';
 
 function App() {
 
   return (
     <>
 
-      <BrowserRouter>
+    <BrowserRouter>
 
         {/* This is how you move from page to page */}
         {/* <nav>
@@ -34,19 +35,21 @@ function App() {
           <Link to='/search'>Search</Link>
           <Link to='/user'>User</Link>
         </nav> */}
-
-        <Routes>
-          <Route path='/' element={<Home />}></Route>
-          <Route path='/admin' element={<Admin />}></Route>
-            <Route path="createlisting" element={<AdminCreateListing />} />
-            <Route path="viewlistings" element={<AdminViewListings />} />
-            <Route path="viewreservations" element={<AdminViewReservations />} />
-          <Route path='/listing' element={<Listing />}></Route>
-          <Route path='/search' element={<Search />}></Route>
-          <Route path='/user' element={<User />}></Route>
-        </Routes>
-
-      </BrowserRouter>
+    
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/listing' element={<Listing />} />
+        <Route path='/search' element={<Search />} />
+        <Route path='/user' element={<User />} />
+        
+        <Route path='/admin' element={<Admin />}>
+          <Route path="createlisting" element={<AdminCreateListing />} />
+          <Route path="viewlistings" element={<AdminViewListings />} />
+          <Route path="viewreservations" element={<AdminViewReservations />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
 
     </>
   )

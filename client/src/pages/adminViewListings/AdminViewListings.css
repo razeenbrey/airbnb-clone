@@ -1,0 +1,31 @@
+#admin-view-listings{
+    padding-top: 2vh;
+    padding-left: 1vw;
+    padding-right: 1vw;
+}
+
+#avl-heading{
+    /* Text */
+
+    width: 122px;
+    height: 20px;
+
+    /* text-sm/Regular */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    /* identical to box height, or 143% */
+    display: flex;
+    align-items: center;
+
+    /* gray/700 */
+    color: #374151;
+
+
+    /* Inside auto layout */
+    flex: none;
+    order: 1;
+    flex-grow: 0;
+    padding-bottom: 2vh;
+}

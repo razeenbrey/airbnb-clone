@@ -9,7 +9,7 @@ import globedark from '../../assets/footer/globe.svg';
 import menu from '../../assets/menu.svg';
 import Avatar from '../../assets/Avatar.svg';
 
-function HeaderLight(){
+function HeaderLight({searchBar = true}){
     return(
         <>
             <span id='headerLight'>
@@ -19,7 +19,8 @@ function HeaderLight(){
                 </span>
 
                 <span id='Pages'>
-                    <SearchBarInactive />
+                    {searchBar&&(<><SearchBarInactive /></>)}
+                    {/* <SearchBarInactive /> */}
                 </span>
 
                 <span id='Right'>

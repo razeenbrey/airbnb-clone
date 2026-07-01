@@ -1,0 +1,23 @@
+/* AdminViewReservations.css */
+#AdminViewReservations {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#avr-heading {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 32px;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+#table-container {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}

@@ -51,10 +51,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static folder for uploads
+// Static folder for uploads + default images (Render has no persistent disk)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+const uploadsDir = path.join(__dirname, 'uploads', 'accommodations');
+const defaultsDir = path.join(__dirname, 'assets', 'defaults');
+
+app.use('/uploads/accommodations', express.static(uploadsDir));
+app.use('/uploads/accommodations', express.static(defaultsDir));
 
 // Mount routes
 app.use('/api/accommodations', accommodationRoutes);

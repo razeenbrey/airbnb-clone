@@ -10,15 +10,15 @@ import Button from '../../components/buttons/Button';
 // Assets
 import hero from '../../assets/hero.svg';
 
-import ipic1 from '../../assets/home/Sandton.png'
-import ipic2 from '../../assets/home/Joburg.png'
-import ipic3 from '../../assets/home/Woodmead.png'
-import ipic4 from '../../assets/home/Hyde.png'
+const ipic1 = '/images/home/Sandton.png';
+const ipic2 = '/images/home/Joburg.png';
+const ipic3 = '/images/home/Woodmead.png';
+const ipic4 = '/images/home/Hyde.png';
 
-import dpic1 from '../../assets/home/Discover1.png'
-import dpic2 from '../../assets/home/Discover2.png'
-import gift from '../../assets/home/giftCards.png'
-import hosting from '../../assets/home/Hosting.png'
+const dpic1 = '/images/home/Discover1.png';
+const dpic2 = '/images/home/Discover2.png';
+const gift = '/images/home/giftCards.png';
+const hosting = '/images/home/Hosting.png';
 
 function Home(){
     const navigate = useNavigate();

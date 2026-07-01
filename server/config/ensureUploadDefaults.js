@@ -23,7 +23,8 @@ const ensureUploadDefaults = () => {
     const targetPath = path.join(uploadsDir, file);
     const sourcePath = path.join(defaultsDir, file);
 
-    if (!fs.existsSync(targetPath)) {
+    // always refresh defaults on Render (disk resets on deploy)
+    if (process.env.NODE_ENV === 'production' || !fs.existsSync(targetPath)) {
       fs.copyFileSync(sourcePath, targetPath);
     }
   });

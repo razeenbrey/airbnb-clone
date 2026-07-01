@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './config/database.js';
+import ensureUploadDefaults from './config/ensureUploadDefaults.js';
 import accommodationRoutes from './routes/accomodationRoutes.js';
 import reservationRoutes from './routes/reservationRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -15,15 +16,30 @@ dotenv.config();
 // Connect to database
 connectDB();
 
+// make sure upload folder + default images exist (needed on Render)
+ensureUploadDefaults();
+
 const app = express();
 
 // Body parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:4173'
+].filter(Boolean);
+
 // Enable CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

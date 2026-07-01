@@ -21,27 +21,35 @@ ensureUploadDefaults();
 
 const app = express();
 
-// Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const normalizeOrigin = (url) => (url ? url.replace(/\/$/, '') : null);
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  ...(process.env.CLIENT_URL
+    ? process.env.CLIENT_URL.split(',').map((url) => normalizeOrigin(url.trim()))
+    : []),
   'http://localhost:5173',
   'http://localhost:4173'
 ].filter(Boolean);
 
-// Enable CORS
+// Enable CORS - must be before routes
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    const normalizedOrigin = normalizeOrigin(origin);
+
+    if (!origin || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      console.log('CORS blocked origin:', origin);
+      callback(null, false);
     }
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+// Body parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Static folder for uploads
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +73,7 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Airbnb backend server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log('Allowed CORS origins:', allowedOrigins);
 });
 
 // Handle unhandled promise rejections

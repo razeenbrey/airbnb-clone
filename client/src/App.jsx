@@ -1,11 +1,6 @@
 // Packages
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 
-// Assets
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-
 // CSS
 import './App.css'
 
@@ -19,6 +14,27 @@ import Listing from './pages/listing/Listing';
 import Search from './pages/search/Search';
 import User from './pages/user/User';
 import Login from './pages/login/Login';
+import { getToken, getUser } from './api/api';
+
+function ProtectedRoute({ children }) {
+  const token = getToken();
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
+function HostRoute({ children }) {
+  const token = getToken();
+  const user = getUser();
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  if (!user?.isHost) {
+    return <Navigate to="/user" replace />;
+  }
+  return children;
+}
 
 function App() {
 
@@ -39,12 +55,22 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/listing' element={<Listing />} />
+        <Route path='/listing/:id' element={<Listing />} />
         <Route path='/search' element={<Search />} />
-        <Route path='/user' element={<User />} />
+        <Route path='/user' element={
+          <ProtectedRoute>
+            <User />
+          </ProtectedRoute>
+        } />
         
-        <Route path='/admin' element={<Admin />}>
+        <Route path='/admin' element={
+          <HostRoute>
+            <Admin />
+          </HostRoute>
+        }>
+          <Route index element={<Navigate to="viewlistings" replace />} />
           <Route path="createlisting" element={<AdminCreateListing />} />
+          <Route path="editlisting/:id" element={<AdminCreateListing />} />
           <Route path="viewlistings" element={<AdminViewListings />} />
           <Route path="viewreservations" element={<AdminViewReservations />} />
         </Route>

@@ -1,4 +1,5 @@
 import './Home.css';
+import { useNavigate, Link } from 'react-router-dom';
 
 // Components
 import Header from '../../components/header/Header';
@@ -20,6 +21,8 @@ import gift from '../../assets/home/giftCards.png'
 import hosting from '../../assets/home/Hosting.png'
 
 function Home(){
+    const navigate = useNavigate();
+
     return(
         <>
 
@@ -34,7 +37,7 @@ function Home(){
                     <img id='hero' src={hero} alt="Image of modern house"></img>
                     <span id='text-center'>
                         <span id='text-main'>Not sure where to go? Perfect.</span>
-                        <button id='hero-button'>
+                        <button id='hero-button' onClick={() => navigate('/search')}>
                             <span className= 'gradient-text'>I'm flexible</span>
                         </button>
                     </span>
@@ -48,7 +51,7 @@ function Home(){
                     <span className='other-text-primary'>Inspiration for your next trip</span>
                     <span id='inspo-container'>
 
-                        <span className='inspo-card'>
+                        <Link to='/search?location=Sandton' className='inspo-card'>
                             <img className='i-card-pic' src={ipic1}></img>
                             <span id='card-1' className='i-card-lower'>
                                 <span className='i-card-content'>
@@ -56,9 +59,9 @@ function Home(){
                                     <span className='i-text-secondary'>53km away</span>
                                 </span>
                             </span>
-                        </span>
+                        </Link>
 
-                        <span className='inspo-card'>
+                        <Link to='/search?location=Sandton' className='inspo-card'>
                             <img className='i-card-pic' src={ipic2}></img>
                             <span id='card-2' className='i-card-lower'>
                                 <span className='i-card-content'>
@@ -66,9 +69,9 @@ function Home(){
                                     <span className='i-text-secondary'>53km away</span>
                                 </span>
                             </span>
-                        </span>
+                        </Link>
 
-                        <span className='inspo-card'>
+                        <Link to='/search?location=Woodmead' className='inspo-card'>
                             <img className='i-card-pic' src={ipic3}></img>
                             <span id='card-3' className='i-card-lower'>
                                 <span className='i-card-content'>
@@ -76,9 +79,9 @@ function Home(){
                                     <span className='i-text-secondary'>53km away</span>
                                 </span>
                             </span>
-                        </span>
+                        </Link>
 
-                        <span className='inspo-card'>
+                        <Link to='/search?location=Camps Bay' className='inspo-card'>
                             <img className='i-card-pic' src={ipic4}></img>
                             <span id='card-4' className='i-card-lower'>
                                 <span className='i-card-content'>
@@ -86,7 +89,7 @@ function Home(){
                                     <span className='i-text-secondary'>53km away</span>
                                 </span>
                             </span>
-                        </span>
+                        </Link>
 
                     </span>
                 </span>

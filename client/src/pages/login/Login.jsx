@@ -1,5 +1,6 @@
 // Login.jsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 // Assets
@@ -7,16 +8,37 @@ import logoLight from '../../assets/LogoLight.svg';
 
 // Components
 import Button from '../../components/buttons/Button';
+import { loginUser, setToken, setUser } from '../../api/api';
 
 function Login() {
-  // Add state for form fields
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', { username, password });
-    //  login logic
+    setError('');
+
+    if (!username || !password) {
+      setError('Please enter username and password');
+      return;
+    }
+
+    try {
+      const data = await loginUser(username, password);
+      setToken(data.token);
+      setUser(data.user);
+
+      if (data.user.isHost) {
+        navigate('/admin/viewlistings');
+      } else {
+        navigate('/user');
+      }
+    } catch (err) {
+      setError(err.message || 'Login failed');
+      // console.log('Login attempted with:', { username, password });
+    }
   };
 
   return (
@@ -28,6 +50,8 @@ function Login() {
         <div id='login-group'>
             <div id='login'>
                 <div id='login-title'>Login</div>
+
+                {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
                 
                 <form onSubmit={handleSubmit}>
 
@@ -59,7 +83,7 @@ function Login() {
                         <div id='forgot' className='field-name'>Forgot Password?</div>
 
                         <div id='login-butt'>
-                            <Button text="Login" fg='white' bg='#4153F5' width='277px' height='55px' />
+                            <Button type="submit" text="Login" fg='white' bg='#4153F5' width='277px' height='55px' />
                         </div>
                     </div>
 

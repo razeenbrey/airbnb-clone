@@ -1,4 +1,6 @@
 import './Listing.css';
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 // Assets
 import bicycle from '../../assets/listingIcons/bicycle.svg';
@@ -36,33 +38,98 @@ import quad44 from '../../assets/test/quad4.png';
 import HeaderLight from '../../components/headerLight/HeaderLight';
 import Footer from '../../components/footer/Footer';
 import Button from '../../components/buttons/Button';
+import { getAccommodation, getImageUrl, createReservation, getToken } from '../../api/api';
 
-function Listing({
-    main,
-    quad1,
-    quad2,
-    quad3,
-    quad4, 
-    name,
-    type,        // "Entire home", "Private room", "Shared room", "Flat", etc.
-    location,    // "Cape Town", "Sandton", etc.
-    host,
-    isSuperhost,
-    isEntireHome,
-    isSelfCheckIn,
-    isEnhancedClean,
-    hasGarden,
-    hasWifi,
-    hasWasher,
-    hasAircon,
-    pets,
-    rating, 
-    reviewCount, 
-    price,
-    bedrooms,
-    bathrooms,
-    maxGuests 
-}){
+function Listing(){
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [listing, setListing] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [checkIn, setCheckIn] = useState('');
+    const [checkOut, setCheckOut] = useState('');
+    const [guests, setGuests] = useState(2);
+    const [reserveMsg, setReserveMsg] = useState('');
+
+    useEffect(() => {
+        const fetchListing = async () => {
+            try {
+                const data = await getAccommodation(id);
+                setListing(data.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchListing();
+    }, [id]);
+
+    const main = listing ? getImageUrl(listing.images?.main?.url) : main1;
+    const quad1 = listing ? getImageUrl(listing.images?.quad1?.url) : quad11;
+    const quad2 = listing ? getImageUrl(listing.images?.quad2?.url) : quad22;
+    const quad3 = listing ? getImageUrl(listing.images?.quad3?.url) : quad33;
+    const quad4 = listing ? getImageUrl(listing.images?.quad4?.url) : quad44;
+    const name = listing?.name || 'Listing';
+    const type = listing?.type || 'Entire home';
+    const location = listing?.location || 'Cape Town';
+    const host = listing?.host?.fullName || 'Host';
+    const isSuperhost = listing?.host?.isSuperhost;
+    const rating = listing?.rating || 0;
+    const reviewCount = listing?.reviewCount || 0;
+    const price = listing?.pricePerNight || 0;
+    const bedrooms = listing?.numRooms || 1;
+    const bathrooms = listing?.numBathrooms || 1;
+    const maxGuests = listing?.maxGuests || 2;
+    const weeklyDiscount = listing?.weeklyDiscount || 0;
+    const cleaningFee = listing?.cleaningFee || 0;
+    const serviceFee = listing?.serviceFee || 0;
+    const occupancyTaxes = listing?.occupancyTaxes || 0;
+
+    const nights = checkIn && checkOut
+        ? Math.max(1, Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)))
+        : 0;
+
+    const subtotal = price * nights;
+    const discount = nights >= 7 ? weeklyDiscount : 0;
+    const total = subtotal - discount + cleaningFee + serviceFee + occupancyTaxes;
+
+    const handleReserve = async () => {
+        setReserveMsg('');
+
+        if (!getToken()) {
+            navigate('/login');
+            return;
+        }
+
+        if (!checkIn || !checkOut) {
+            setReserveMsg('Please select check-in and check-out dates');
+            return;
+        }
+
+        try {
+            await createReservation({
+                accommodation: id,
+                checkIn,
+                checkOut,
+                guests: Number(guests),
+                totalPrice: total
+            });
+            setReserveMsg('Reservation created!');
+        } catch (err) {
+            setReserveMsg(err.message);
+        }
+    };
+
+    if (loading) {
+        return <div style={{ padding: '40px' }}>Loading listing...</div>;
+    }
+
+    if (error) {
+        return <div style={{ padding: '40px', color: 'red' }}>{error}</div>;
+    }
+
     return(
         <>
             <div id="listing">
@@ -72,18 +139,18 @@ function Listing({
                 <div id='listing-body'>
 
                     <div id='title-bar'>
-                        <div id='title-name'>Bordeux Getaway</div>
+                        <div id='title-name'>{name}</div>
                         <div id='title-info'>
                             <div id='title-info-left'>
                                 <img src={star}></img>
-                                <div className='text-secondary-light'>5.0</div>
+                                <div className='text-secondary-light'>{rating}</div>
                                 <div>•</div>
-                                <div className='text-secondary-light'>7 reviews</div>
+                                <div className='text-secondary-light'>{reviewCount} reviews</div>
                                 <div>•</div>
                                 <img src={star}></img>
-                                <div className='text-secondary-light'>Superhost</div>
+                                {isSuperhost && (<><div className='text-secondary-light'>Superhost</div></>)}
                                 <div>•</div>
-                                <div className='text-secondary-light'>Location</div>
+                                <div className='text-secondary-light'>{location}</div>
                             </div>
                             <div id='title-info-right'>
                                 <div className='info-right-container'>
@@ -99,12 +166,12 @@ function Listing({
                     </div>
 
                     <div id='image-bar'>
-                        <img src={main1}></img>
+                        <img src={main}></img>
                         <div id='image-quad'>
-                            <img src={quad11}></img>
-                            <img src={quad22}></img>
-                            <img src={quad33}></img>
-                            <img src={quad44}></img>
+                            <img src={quad1}></img>
+                            <img src={quad2}></img>
+                            <img src={quad3}></img>
+                            <img src={quad4}></img>
                         </div>
                     </div>
 
@@ -112,21 +179,22 @@ function Listing({
                         <div id='info'>
                             <div className='info-sec'>
                                <div>
-                                    <div className='subtitle'>Entire rental unit hosted by Ghazal</div>
+                                    <div className='subtitle'>{type} hosted by {host}</div>
                                     <div className='detail-row'>
-                                        <span className='text-secondary-dark'>2 Guests</span>
+                                        <span className='text-secondary-dark'>{maxGuests} Guests</span>
                                         <span className='dot-separator'>•</span>
-                                        <span className='text-secondary-dark'>1 Bedroom</span>
+                                        <span className='text-secondary-dark'>{bedrooms} Bedroom</span>
                                         <span className='dot-separator'>•</span>
-                                        <span className='text-secondary-dark'>1 Bathroom</span>
+                                        <span className='text-secondary-dark'>{bathrooms} Bathroom</span>
                                     </div>
                                 </div>
                                 <div id='profile'>
                                     <img src={avatar}></img>
-                                    <img src={superhost}></img>
+                                    {isSuperhost && (<><img src={superhost}></img></>)}
                                 </div>
                             </div>
                             <div className='info-sec'>
+                                {listing?.amenities?.entireHome && (
                                 <div className='info-entry'>
                                     <img src={house}></img>
                                     <div className='entry'>
@@ -134,6 +202,8 @@ function Listing({
                                         <div className='text-secondary-light'>You'll have the apartment to yourself.</div>
                                     </div>
                                 </div>
+                                )}
+                                {listing?.amenities?.enhancedClean && (
                                 <div className='info-entry'>
                                     <img src={sparkles}></img>
                                     <div className='entry'>
@@ -141,6 +211,8 @@ function Listing({
                                         <div className='text-secondary-light'>This Host committed to Airbnb's 5 step enhanced cleaning process.</div>
                                     </div>
                                 </div>
+                                )}
+                                {listing?.amenities?.selfCheckIn && (
                                 <div className='info-entry'>
                                     <img src={doorEnter}></img>
                                     <div className='entry'>
@@ -148,59 +220,71 @@ function Listing({
                                         <div className='text-secondary-light'>Check yourself in with the keypad.</div>
                                     </div>
                                 </div>
+                                )}
                             </div>
                             <div className='info-sec'>
-                                <p>Come and stay in this superb duplex T2, in the heart of the historic center of Bordeaux. Spacious and bright, in a real Bordeaux building in exposed stone, you will enjoy all the charms of the city thanks to its ideal location. Close to many shops, bars and restaurants, you can access the apartment by tram A and C and bus routes 27 and 44.</p>
+                                <p>{listing?.description}</p>
                             </div>
                         </div>
                         <div id='bill'>
                             <div id='bill-container'>
                                 <div className="result-price">
-                                    <div className="price-amount">R22</div>
+                                    <div className="price-amount">R{price}</div>
                                     <div className="price-period">/ night</div>
                                 </div>
                                 <div id='booking-summary'>
                                     <div id='booking-summary-top'>
                                         <div id='check-in' className='booking-block'>
                                             <div className='small-dark'>CHECK-IN</div>
-                                            <div className='text-secondary-light'>2/19/2022</div>
+                                            <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
                                         </div>
                                         <div id='check-out' className='booking-block'>
                                             <div className='small-dark'>CHECK-OUT</div>
-                                            <div className='text-secondary-light'>2/19/2022</div>
+                                            <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
                                         </div>
                                     </div>
                                     <div id='booking-summary-bottom'>
                                         <div id='guests' className='booking-block'>
                                             <div className='small-dark'>GUESTS</div>
-                                            <div className='text-secondary-light'>2 guests</div>
+                                            <input type="number" min="1" max={maxGuests} value={guests} onChange={(e) => setGuests(e.target.value)} />
                                         </div>
                                         <img src={dropdown}></img>
                                     </div>
                                 </div>
-                                <Button fg="white" bg="#DE3151" text="Reserve" width='322px' height='44px'/>
+                                <div onClick={handleReserve}>
+                                    <Button fg="white" bg="#DE3151" text="Reserve" width='322px' height='44px'/>
+                                </div>
+                                {reserveMsg && <div className='text-secondary-light'>{reserveMsg}</div>}
                                 <div className='text-secondary-light'>You won't be charged yet</div>
                                 <div id='costs'>
+                                    {nights > 0 && (
                                     <div className='cost-entry'>
-                                        <div className='text-primary-dark-2'>R24 x 10 nights</div>
-                                        <div className='text-primary-dark-2'>R240</div>
+                                        <div className='text-primary-dark-2'>R{price} x {nights} nights</div>
+                                        <div className='text-primary-dark-2'>R{subtotal}</div>
                                     </div>
+                                    )}
+                                    {discount > 0 && (
                                     <div className='cost-entry'>
                                         <div className='text-primary-dark-2'>Weekly discount</div>
-                                        <div className='text-primary-dark-2'>R20</div>
+                                        <div className='text-primary-dark-2'>-R{discount}</div>
                                     </div>
+                                    )}
                                     <div className='cost-entry'>
                                         <div className='text-primary-dark-2'>Cleaning fee</div>
-                                        <div className='text-primary-dark-2'>R40</div>
+                                        <div className='text-primary-dark-2'>R{cleaningFee}</div>
                                     </div>
                                     <div className='cost-entry'>
                                         <div className='text-primary-dark-2'>Service fee</div>
-                                        <div className='text-primary-dark-2'>R70</div>
+                                        <div className='text-primary-dark-2'>R{serviceFee}</div>
+                                    </div>
+                                    <div className='cost-entry'>
+                                        <div className='text-primary-dark-2'>Occupancy taxes</div>
+                                        <div className='text-primary-dark-2'>R{occupancyTaxes}</div>
                                     </div>
                                 </div>
                                 <div className='cost-entry'>
                                     <div className='text-primary-dark-2'>Total</div>
-                                    <div className='text-primary-dark-2'>R240</div>
+                                    <div className='text-primary-dark-2'>R{total}</div>
                                 </div>
                             </div>
                         </div>
@@ -209,26 +293,36 @@ function Listing({
                     <div id='amenities'>
                         <div className='subtitle'>What this place offers</div>
                         <div id='amenities-container'>
+                            {listing?.amenities?.garden && (
                             <div className='amenity'>
                                 <img src={garden}></img>
                                 <div className='text-primary-dark-2'>Garden View</div>
                             </div>
+                            )}
+                            {listing?.amenities?.wifi && (
                             <div className='amenity'>
                                 <img src={wifi}></img>
                                 <div className='text-primary-dark-2'>WiFi</div>
                             </div>
+                            )}
+                            {listing?.amenities?.washer && (
                             <div className='amenity'>
                                 <img src={washer}></img>
                                 <div className='text-primary-dark-2'>Free Washer</div>
                             </div>
+                            )}
+                            {listing?.amenities?.aircon && (
                             <div className='amenity'>
                                 <img src={wind}></img>
                                 <div className='text-primary-dark-2'>Central air conditioning</div>
                             </div>
+                            )}
+                            {listing?.amenities?.pets && (
                             <div className='amenity'>
                                 <img src={bone}></img>
                                 <div className='text-primary-dark-2'>Pets allowed</div>
                             </div>
+                            )}
                         </div>
                     </div>
 
@@ -236,11 +330,11 @@ function Listing({
                         <div id='host-top'>
                             <img src={avatar}></img>
                             <div id='host-info'>
-                                <div className='subtitle'>Hosted by Ghazal</div>
+                                <div className='subtitle'>Hosted by {host}</div>
                                 <div className='text-secondary-light'>Joined May 2021</div>
                             </div>
                         </div>
-                        <div className='text-primary-dark'>Ghazal is a Superhost</div>
+                        {isSuperhost && <div className='text-primary-dark'>{host} is a Superhost</div>}
                         <div className='text-secondary-light'>Superhosts are experienced, highly rated hosts who are<br/>committed to providing great stays for guests.</div>
                         <div className='text-secondary-light'>Response rate: 100%</div>
                         <div className='text-secondary-light'>Response time: within an hour</div>

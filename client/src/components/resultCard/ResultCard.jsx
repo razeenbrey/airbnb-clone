@@ -1,15 +1,17 @@
 // ResultCard.jsx
 import './ResultCard.css';
+import { Link } from 'react-router-dom';
 
 //Assets
 import heart from '../../assets/listingIcons/heart.svg';
 import star from '../../assets/listingIcons/star.svg';
 
 function ResultCard({ 
+  id,
   image, 
   name,
-  type,        // "Entire home", "Private room", "Shared room", "Flat", etc.
-  location,    // "Cape Town", "Sandton", etc.
+  type,
+  location,
   hasGarden,
   hasWifi,
   hasWasher,
@@ -22,6 +24,7 @@ function ResultCard({
   maxGuests 
 }) {
   return (
+    <Link to={`/listing/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
     <div className="search-result">
       {/* Image Section */}
       <div className="result-image-container">
@@ -88,6 +91,7 @@ function ResultCard({
         </div>
       </div>
     </div>
+    </Link>
   );
 }
 

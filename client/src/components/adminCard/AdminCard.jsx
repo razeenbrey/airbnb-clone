@@ -9,8 +9,8 @@ import Button from '../buttons/Button';
 function AdminCard({ 
   image, 
   name,
-  type,        // "Entire home", "Private room", "Shared room", "Flat", etc.
-  location,    // "Cape Town", "Sandton", etc.
+  type,
+  location,
   hasGarden,
   hasWifi,
   hasWasher,
@@ -20,15 +20,21 @@ function AdminCard({
   price,
   bedrooms,
   bathrooms,
-  maxGuests 
+  maxGuests,
+  onUpdate,
+  onDelete
 }) {
   return (
     <div className="search-result">
       {/* Image Section */}
       <div className="res-image-container">
         <img src={image} alt={name} className="result-image" />
-        <Button text="Update" width='300px' height='44px' bg={"#4153F5"} fg={"white"}/>
-        <Button text="Delete" width='300px' height='44px' bg={"#DE3151"} fg={"white"}/>
+        <div onClick={onUpdate}>
+          <Button text="Update" width='300px' height='44px' bg={"#4153F5"} fg={"white"}/>
+        </div>
+        <div onClick={onDelete}>
+          <Button text="Delete" width='300px' height='44px' bg={"#DE3151"} fg={"white"}/>
+        </div>
       </div>
 
       {/* Content Section */}

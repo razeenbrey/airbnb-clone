@@ -1,77 +1,73 @@
 import './Search.css';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 // Components
 import Footer from '../../components/footer/Footer';
 import HeaderLight from '../../components/headerLight/HeaderLight';
 import ResultCard from '../../components/resultCard/ResultCard';
-
-// Assets
-import listing1 from '../../assets/test/listing1.png';
-import listing2 from '../../assets/test/listing2.png';
-import listing3 from '../../assets/test/listing3.png';
+import { getAccommodations, getImageUrl } from '../../api/api';
 
 function Search(){
+    const [searchParams] = useSearchParams();
+    const location = searchParams.get('location') || '';
+    const [listings, setListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchListings = async () => {
+            try {
+                setLoading(true);
+                const data = await getAccommodations(location);
+                setListings(data.data || []);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchListings();
+    }, [location]);
+
     return(
         <>
             <div id='search-page'>
                 <HeaderLight />
                 <div id='search-results'>
 
-                    <div id='filters-section'></div>
+                    <div id='filters-section'>
+                        <h2>
+                            {location ? `${listings.length} stays in ${location}` : `${listings.length} stays available`}
+                        </h2>
+                    </div>
 
                     <div id='search-results'>
 
-                        <ResultCard
-                        key={1}
-                        image={listing1}
-                        type="Entire home"
-                        location="Camps Bay"
-                        name="Stunning Ocean View Villa"
-                        hasGarden = {true}
-                        hasWifi= {true}
-                        hasWasher= {true}
-                        pets= {true}
-                        rating={4}
-                        reviewCount={5}
-                        price={23}
-                        bedrooms={2}
-                        bathrooms={2}
-                        maxGuests={4}
-                        />
+                        {loading && <div>Loading listings...</div>}
+                        {error && <div style={{ color: 'red' }}>{error}</div>}
 
-                        <ResultCard
-                        image={listing2}
-                        type="Flat"
-                        location="Sandton"
-                        name="Modern City Apartment"
-                        rating={4.7}
-                        reviewCount={56}
-                        price={1800}
-                        bedrooms={2}
-                        bathrooms={1}
-                        maxGuests={4}
-                        hasGarden={false}
-                        hasWifi={true}
-                        hasWasher={false}
-                        pets={false}
-                        />
-
-                        <ResultCard
-                        image={listing3}
-                        type="Private room"
-                        location="Stellenbosch"
-                        name="Cozy Room in Wine Farm"
-                        rating={4.5}
-                        reviewCount={32}
-                        price={750}
-                        bedrooms={1}
-                        bathrooms={1}
-                        maxGuests={2}
-                        hasGarden={true}
-                        hasWifi={true}
-                        hasWasher={true}
-                        pets={false}
-                        />
+                        {!loading && listings.map((listing) => (
+                            <ResultCard
+                                key={listing._id}
+                                id={listing._id}
+                                image={getImageUrl(listing.images?.main?.url)}
+                                type={listing.type}
+                                location={listing.location}
+                                name={listing.name}
+                                hasGarden={listing.amenities?.garden}
+                                hasWifi={listing.amenities?.wifi}
+                                hasWasher={listing.amenities?.washer}
+                                pets={listing.amenities?.pets}
+                                rating={listing.rating}
+                                reviewCount={listing.reviewCount}
+                                price={listing.pricePerNight}
+                                bedrooms={listing.numRooms}
+                                bathrooms={listing.numBathrooms}
+                                maxGuests={listing.maxGuests}
+                            />
+                        ))}
 
                     </div>
 

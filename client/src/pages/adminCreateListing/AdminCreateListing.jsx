@@ -1,9 +1,15 @@
 // AdminCreateListing.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './AdminCreateListing.css';
 import Button from '../../components/buttons/Button';
+import { createAccommodation, updateAccommodation, getAccommodation } from '../../api/api';
 
 function AdminCreateListing() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+
   const [formData, setFormData] = useState({
     listingName: '',
     location: '',
@@ -13,6 +19,10 @@ function AdminCreateListing() {
     numBathrooms: '',
     numGuests: '',
     price: '',
+    weeklyDiscount: '',
+    cleaningFee: '',
+    serviceFee: '',
+    occupancyTaxes: '',
     images: [],
     amenities: {
       entireHome: false,
@@ -25,6 +35,37 @@ function AdminCreateListing() {
       pets: false,
     }
   });
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (isEdit) {
+      const loadListing = async () => {
+        try {
+          const data = await getAccommodation(id);
+          const listing = data.data;
+          setFormData({
+            listingName: listing.name,
+            location: listing.location,
+            type: listing.type,
+            description: listing.description,
+            numRooms: listing.numRooms,
+            numBathrooms: listing.numBathrooms,
+            numGuests: listing.maxGuests,
+            price: listing.pricePerNight,
+            weeklyDiscount: listing.weeklyDiscount || 0,
+            cleaningFee: listing.cleaningFee || 0,
+            serviceFee: listing.serviceFee || 0,
+            occupancyTaxes: listing.occupancyTaxes || 0,
+            images: [],
+            amenities: listing.amenities || formData.amenities
+          });
+        } catch (err) {
+          setError(err.message);
+        }
+      };
+      loadListing();
+    }
+  }, [id, isEdit]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,21 +94,77 @@ function AdminCreateListing() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Creating listing:', formData);
-    // todoo listing logic here
+    setError('');
+
+    if (!formData.listingName || !formData.location || !formData.type) {
+      setError('Please fill in required fields');
+      return;
+    }
+
+    try {
+      if (isEdit) {
+        await updateAccommodation(id, {
+          name: formData.listingName,
+          location: formData.location,
+          type: formData.type,
+          description: formData.description,
+          numRooms: Number(formData.numRooms),
+          numBathrooms: Number(formData.numBathrooms),
+          maxGuests: Number(formData.numGuests),
+          pricePerNight: Number(formData.price),
+          weeklyDiscount: Number(formData.weeklyDiscount) || 0,
+          cleaningFee: Number(formData.cleaningFee) || 0,
+          serviceFee: Number(formData.serviceFee) || 0,
+          occupancyTaxes: Number(formData.occupancyTaxes) || 0,
+          amenities: formData.amenities
+        });
+        navigate('/admin/viewlistings');
+        return;
+      }
+
+      const submitData = new FormData();
+      submitData.append('name', formData.listingName);
+      submitData.append('location', formData.location);
+      submitData.append('type', formData.type);
+      submitData.append('description', formData.description);
+      submitData.append('numRooms', formData.numRooms);
+      submitData.append('numBathrooms', formData.numBathrooms);
+      submitData.append('maxGuests', formData.numGuests);
+      submitData.append('pricePerNight', formData.price);
+      submitData.append('weeklyDiscount', formData.weeklyDiscount || 0);
+      submitData.append('cleaningFee', formData.cleaningFee || 0);
+      submitData.append('serviceFee', formData.serviceFee || 0);
+      submitData.append('occupancyTaxes', formData.occupancyTaxes || 0);
+      submitData.append('amenities', JSON.stringify(formData.amenities));
+
+      const imageFields = ['main', 'quad1', 'quad2', 'quad3', 'quad4'];
+      formData.images.forEach((file, index) => {
+        if (imageFields[index]) {
+          submitData.append(imageFields[index], file);
+        }
+      });
+
+      await createAccommodation(submitData);
+      navigate('/admin/viewlistings');
+    } catch (err) {
+      setError(err.message);
+      // console.log('Creating listing:', formData);
+    }
   };
 
   const handleCancel = () => {
-    console.log('Cancelled');
+    navigate('/admin/viewlistings');
   };
 
   return (
     <div id='create-listing-page'>
       <div id='create-listing-group'>
         <div id='create-listing'>
-          <div id='create-listing-title'>Create New Listing</div>
+          <div id='create-listing-title'>{isEdit ? 'Update Listing' : 'Create New Listing'}</div>
+
+          {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <div id='fields'>
@@ -177,6 +274,56 @@ function AdminCreateListing() {
                 </div>
               </div>
 
+              <div className='number-row'>
+                <div className='field number-field'>
+                  <div className='field-name'>Weekly Discount (R)</div>
+                  <input className='input-field'
+                    name="weeklyDiscount"
+                    type="number"
+                    value={formData.weeklyDiscount}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+
+                <div className='field number-field'>
+                  <div className='field-name'>Cleaning Fee (R)</div>
+                  <input className='input-field'
+                    name="cleaningFee"
+                    type="number"
+                    value={formData.cleaningFee}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+
+                <div className='field number-field'>
+                  <div className='field-name'>Service Fee (R)</div>
+                  <input className='input-field'
+                    name="serviceFee"
+                    type="number"
+                    value={formData.serviceFee}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+
+                <div className='field number-field'>
+                  <div className='field-name'>Occupancy Taxes (R)</div>
+                  <input className='input-field'
+                    name="occupancyTaxes"
+                    type="number"
+                    value={formData.occupancyTaxes}
+                    onChange={handleInputChange}
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+              </div>
+
               
               <div className='field'>
                 <div className='field-name'>Amenities</div>
@@ -264,6 +411,7 @@ function AdminCreateListing() {
               </div>
 
               
+              {!isEdit && (
               <div className='field'>
                 <div className='field-name'>Images</div>
                 <div className='upload-area'>
@@ -292,12 +440,13 @@ function AdminCreateListing() {
                   </div>
                 )}
               </div>
+              )}
             </div>
 
             
             <div id='create-listing-lower'>
               <div id='create-listing-buttons'>
-                <Button text="Create Listing" fg='white' bg='#4153F5' width='277px' height='55px' />
+                <Button type="submit" text={isEdit ? "Update Listing" : "Create Listing"} fg='white' bg='#4153F5' width='277px' height='55px' />
                 <div onClick={handleCancel}>
                   <Button text="Cancel" fg='white' bg='#CC2D4A' width='277px' height='55px' />
                 </div>

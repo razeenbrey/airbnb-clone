@@ -3,7 +3,9 @@ function Button({
                 bg, 
                 text,
                 width= '142px',
-                height= '56px'
+                height= '56px',
+                onClick,
+                type = 'button'
             }){
 
     const buttonStyle = {
@@ -35,7 +37,7 @@ function Button({
 
     return(
         <>
-            <button style={buttonStyle}>{text}</button>
+            <button type={type} style={buttonStyle} onClick={onClick}>{text}</button>
         </>
     );
 }
